@@ -1,0 +1,8 @@
+# Ignore Visual Studio Code project and settings files
+.vscode/
+
+# Ignore Mac files
+.DS_Store
+
+# Ignore JetBrains IDEs files
+.idea/
