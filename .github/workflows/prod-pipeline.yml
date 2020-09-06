@@ -26,6 +26,9 @@ jobs:
         echo "${{ secrets.GCP_CREDENTIALS }}" | base64 -d > credentials.json
         echo "::set-env name=GOOGLE_CREDENTIALS::$(pwd)/credentials.json"
     
+    - name: Configure GCP Project
+      run: sed -i -e 's/{{ project_id }}/${{ env.GPC_PROJECT_ID }}/g' values.tfvars
+
     - name: Configure Terraform State Bucket
       run: sed -i -e 's/{{ bucket }}/${{ env.TERRAFORM_STATE_BUCKET }}/g' terraform.tf
 
