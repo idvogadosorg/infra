@@ -19,7 +19,7 @@ jobs:
       uses: hashicorp/setup-terraform@v1
 
     - name: Setup GCP
-    - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+      uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
       with:
         service_account_key: ${{ secrets.GCP_CREDENTIALS_DEV }}
 
@@ -31,12 +31,12 @@ jobs:
 
     - name: Terraform Workspace
       run: |
-          workspace="dev"
-          workspaces=$(terraform workspace list)
-          if [[ ! "$workspaces" =~ $workspace ]]; then
-              terraform workspace new "${workspace}"
-          fi
-          terraform workspace select "${workspace}"
+        workspace="dev"
+        workspaces=$(terraform workspace list)
+        if [[ ! "$workspaces" =~ $workspace ]]; then
+            terraform workspace new "${workspace}"
+        fi
+        terraform workspace select "${workspace}"
 
     - name: Terraform Validate
       run: terraform validate
