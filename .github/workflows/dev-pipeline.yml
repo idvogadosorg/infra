@@ -12,11 +12,19 @@ jobs:
       run:
         working-directory: ./terraform
     steps:
-    - uses: actions/checkout@v2
-    - uses: hashicorp/setup-terraform@v1
+      - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v1
+
+    - name: Setup GCP
+    - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+      with:
+        service_account_key: ${{ secrets.GCP_CREDENTIALS_DEV }}
 
     - name: Configure GCP Credentials
-      run: echo "${{ secrets.GCP_CREDENTIALS_DEV }}" | base64 --decode > credentials.json
+      run: echo -n ${{ secrets.GCP_CREDENTIALS_DEV }} | base64 --decode > $GOOGLE_APPLICATION_CREDENTIALS
 
     - name: Terraform Init
       run: terraform init
