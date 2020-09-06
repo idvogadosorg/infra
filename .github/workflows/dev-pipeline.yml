@@ -12,7 +12,7 @@ jobs:
       run:
         working-directory: ./terraform
     env:
-      GOOGLE_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS_DEV }}
+      GOOGLE_CREDENTIALS: echo "${{ secrets.GCP_CREDENTIALS_DEV }}" | base64 -d
     steps:
     - name: Checkout
       uses: actions/checkout@v2
