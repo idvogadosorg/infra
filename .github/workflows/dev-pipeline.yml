@@ -44,11 +44,11 @@ jobs:
       run: terraform validate
 
     - name: Terraform Plan
-      run: terraform plan -var-file="vars/dev.tfvars"
+      run: terraform plan -var-file="values.tfvars"
 
     ## TODO: Remove. To be applied only for production
     - name: Terraform Apply
-      run: terraform apply -var-file="vars/dev.tfvars" -auto-approve
+      run: terraform apply -var-file="values.tfvars" -auto-approve
 
 #   k8s:
 #     needs: [terraform]
