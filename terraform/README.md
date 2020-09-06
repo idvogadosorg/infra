@@ -40,6 +40,8 @@ Caso não tenha uma Service Account, crie uma (basta ir em `IAM > Service Accoun
 export GOOGLE_CREDENTIALS="~/.gcp/credentials/my-credential.json"
 ```
 
+Documentação do GCP: https://cloud.google.com/iam/docs/creating-managing-service-accounts?hl=pt-br
+
 Por fim, substitua os placeholds abaixo com os nomes configurados na sua conta:
 - `terraform.tf`: Trocar `{{ bucket }}` pelo nome do bucket da sua conta, onde ficará o `terraform.state`.
 - `values.tfvars`: Trocar `{{ project_id }}` pelo project ID da sua conta.
