@@ -1,5 +1,5 @@
 terraform {
   backend "gcs" {
-    bucket = "{{ bucket }}" # Replace for your bucket to run it locally
+    bucket = "{{ bucket }}" # Substitua pelo seu bucket para rodar local
   }
 }
