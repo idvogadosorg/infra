@@ -12,7 +12,7 @@ jobs:
       run:
         working-directory: ./terraform
     env:
-      APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+      APPLICATION_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS_DEV }}
       PROJECT_ID: idvogados-dev
     steps:
     - name: Checkout
