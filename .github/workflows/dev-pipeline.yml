@@ -13,6 +13,7 @@ jobs:
         working-directory: ./terraform
     env:
       TERRAFORM_STATE_BUCKET: idvogados-terraform-state
+      GCP_PROJECT_ID: idvogados-288720
     steps:
     - name: Checkout
       uses: actions/checkout@v2
@@ -28,6 +29,9 @@ jobs:
     - name: Configure Terraform State Bucket
       run: sed -i -e 's/{{ bucket }}/${{ env.TERRAFORM_STATE_BUCKET }}/g' terraform.tf
 
+    - name: Configure GCP Project
+      run: sed -i -e 's/{{ project_id }}/${{ env.GPC_PROJECT_ID }}/g' values.tfvars
+      
     - name: Terraform Init
       run: terraform init
 
@@ -45,90 +49,3 @@ jobs:
 
     - name: Terraform Plan
       run: terraform plan -var-file="values.tfvars"
-
-    ## TODO: Remove. To be applied only for production
-    - name: Terraform Apply
-      run: terraform apply -var-file="values.tfvars" -auto-approve
-
-#   k8s:
-#     needs: [terraform]
-#     name: 'K8s'
-#     runs-on: ubuntu-latest
-#     steps:
-#     - name: Checkout
-#       uses: actions/checkout@v2
-
-#     - name: Configure AWS Credentials
-#       uses: aws-actions/configure-aws-credentials@v1
-#       with:
-#         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_DEV }}
-#         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_DEV }}
-#         aws-region: us-east-1
-    
-#     - name: Login to Amazon ECR
-#       id: ecr-login
-#       uses: aws-actions/amazon-ecr-login@v1
-#     - name: Resolve placeholders
-#       run: |
-#         export S3_BUCKET="$(cat ../infra/envs/dev.backend.tf | grep bucket | cut -d'"' -f 2)"
-#         aws s3 cp s3://$S3_BUCKET/terraform.outputs terraform.outputs
-#         source terraform.outputs
-#         export ECR_REGISTRY="${{ steps.login-ecr.outputs.registry }}"
-#         export ECR_REPOSITORY_URL="${ecr_repository_url}"
-#         export CERT_ARN="${acm_certificate_arn}"
-#         export IMAGE_TAG="latest"
-#         export K8S_NAMESPACE="happ-dev"
-#         mkdir final
-#         envsubst < namespace.yaml > final/namespace.yaml
-#         envsubst < deployment.yaml > final/deployment.yaml
-#         envsubst < service.yaml > final/service.yaml
-#         envsubst < ingress.yaml > final/ingress.yaml
-#       working-directory: ./k8s/
-
-#     - name: K8s Deploy
-#       run: |
-#         export S3_BUCKET="$(cat ../infra/envs/dev.backend.tf | grep bucket | cut -d'"' -f 2)"
-#         aws s3 cp s3://$S3_BUCKET/terraform.outputs terraform.outputs
-#         source terraform.outputs
-#         aws eks --region us-east-1 update-kubeconfig --name $eks_cluster_name
-#         kubectl apply -f final/namespace.yaml --kubeconfig ~/.kube/config
-#         kubectl apply -f final/deployment.yaml --kubeconfig ~/.kube/config
-#         kubectl apply -f final/service.yaml --kubeconfig ~/.kube/config
-#         kubectl apply -f final/ingress.yaml --kubeconfig ~/.kube/config
-#       working-directory: ./k8s/
-
-#   uptime:
-#     needs: [k8s]
-#     name: 'Application Uptime'
-#     runs-on: ubuntu-latest
-#     steps:
-#     - name: Sleep ${{ secrets.INFRA_UPTIME_DEV }}
-#       run: sleep ${{ secrets.INFRA_UPTIME_DEV }}
-  
-#   infra-destroy:
-#     needs: [uptime]
-#     name: 'Destroy infra - Terraform'
-#     runs-on: ubuntu-latest
-#     steps:
-#     - name: Checkout
-#       uses: actions/checkout@v2
-
-#     - name: Configure AWS Credentials
-#       uses: aws-actions/configure-aws-credentials@v1
-#       with:
-#         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_DEV }}
-#         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_DEV }}
-#         aws-region: us-east-1
-
-#     - name: Setup Terraform
-#       uses: hashicorp/setup-terraform@v1
-#       with:
-#         terraform_version: 0.12.28
-
-#     - name: Terraform Init
-#       run: terraform init -backend-config=envs/dev.backend.tf
-#       working-directory: ./infra
-
-#     - name: Terraform Validate
-#       run: terraform validate
-#       working-directory: ./infra

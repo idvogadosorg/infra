@@ -8,6 +8,47 @@ jobs:
   terraform:
     name: 'Terraform'
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./terraform
+    env:
+      TERRAFORM_STATE_BUCKET: idvogados-terraform-state
+      GCP_PROJECT_ID: idvogados-288720
     steps:
     - name: Checkout
       uses: actions/checkout@v2
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v1
+
+    - name: Configure GCP Credentials
+      run: | 
+        echo "${{ secrets.GCP_CREDENTIALS }}" | base64 -d > credentials.json
+        echo "::set-env name=GOOGLE_CREDENTIALS::$(pwd)/credentials.json"
+    
+    - name: Configure Terraform State Bucket
+      run: sed -i -e 's/{{ bucket }}/${{ env.TERRAFORM_STATE_BUCKET }}/g' terraform.tf
+
+    - name: Configure GCP Project
+      run: sed -i -e 's/{{ project_id }}/${{ env.GPC_PROJECT_ID }}/g' values.tfvars
+      
+    - name: Terraform Init
+      run: terraform init
+
+    - name: Terraform Workspace
+      run: |
+        workspace="dev"
+        workspaces=$(terraform workspace list)
+        if [[ ! "$workspaces" =~ $workspace ]]; then
+            terraform workspace new "${workspace}"
+        fi
+        terraform workspace select "${workspace}"
+
+    - name: Terraform Validate
+      run: terraform validate
+
+    - name: Terraform Plan
+      run: terraform plan -var-file="values.tfvars"
+
+    - name: Terraform Apply
+      run: terraform apply -var-file="values.tfvars" -auto-approve
