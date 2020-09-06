@@ -22,7 +22,7 @@ jobs:
 
     - name: Configure GCP Credentials
       run: | 
-        echo "${{ secrets.GCP_CREDENTIALS_DEV }}" | base64 -d > credentials.json
+        echo "${{ secrets.GCP_CREDENTIALS }}" | base64 -d > credentials.json
         echo "::set-env name=GOOGLE_CREDENTIALS::$(pwd)/credentials.json"
     
     - name: Configure Terraform State Bucket
