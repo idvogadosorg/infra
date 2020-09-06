@@ -11,14 +11,15 @@ jobs:
     defaults:
       run:
         working-directory: ./terraform
-    env:
-      GOOGLE_CREDENTIALS: echo "${{ secrets.GCP_CREDENTIALS_DEV }}" | base64 -d
     steps:
     - name: Checkout
       uses: actions/checkout@v2
 
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v1
+
+    - name: GCP Credentials
+      run: echo "::set-env name=GOOGLE_CREDENTIALS::$(echo "${{ secrets.GCP_CREDENTIALS_DEV }}" | base64 -d)"
 
     - name: Terraform Init
       run: terraform init
