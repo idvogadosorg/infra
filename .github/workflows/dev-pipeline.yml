@@ -8,16 +8,18 @@ jobs:
   terraform:
     name: 'Terraform'
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./infra
     steps:
     - uses: actions/checkout@v2
     - uses: hashicorp/setup-terraform@v1
-    
+
     - name: Configure GCP Credentials
       run: echo "${{ secrets.GCP_CREDENTIALS_DEV }}" | base64 --decode > credentials.json
 
     - name: Terraform Init
       run: terraform init
-      working-directory: ./infra
 
     - name: Terraform Workspace
       run: |
@@ -27,19 +29,15 @@ jobs:
               terraform workspace new "${workspace}"
           fi
           terraform workspace select "${workspace}"
-      working-directory: ./infra
 
     - name: Terraform Validate
       run: terraform validate
-      working-directory: ./infra
 
     - name: Terraform Plan
       run: terraform plan -var-file="vars/dev.tfvars"
-      working-directory: ./infra
 
     - name: Terraform Apply
       run: terraform apply -var-file="vars/dev.tfvars" -auto-approve
-      working-directory: ./infra
 
 #   k8s:
 #     needs: [terraform]
