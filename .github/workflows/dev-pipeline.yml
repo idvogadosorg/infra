@@ -12,17 +12,13 @@ jobs:
       run:
         working-directory: ./terraform
     env:
-      APPLICATION_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS_DEV }}
-      PROJECT_ID: idvogados-dev
+      GOOGLE_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS_DEV }}
     steps:
     - name: Checkout
       uses: actions/checkout@v2
 
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v1
-
-    - name: Setup GCP
-      uses: actions-hub/gcloud@master
 
     - name: Terraform Init
       run: terraform init

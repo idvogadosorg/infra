@@ -1,5 +1,5 @@
 terraform {
   backend "gcs" {
-    bucket  = "idvogados-terraform-state"
+    bucket      = "idvogados-terraform-state"
   }
 }
