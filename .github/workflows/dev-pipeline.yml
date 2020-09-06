@@ -19,7 +19,9 @@ jobs:
       uses: hashicorp/setup-terraform@v1
 
     - name: GCP Credentials
-      run: echo "::set-env name=GOOGLE_CREDENTIALS::$(echo "${{ secrets.GCP_CREDENTIALS_DEV }}" | base64 -d)"
+      run: | 
+        echo "${{ secrets.GCP_CREDENTIALS_DEV }}" | base64 -d > credentials.json
+        echo "::set-env name=GOOGLE_CREDENTIALS::$(pwd)/credentials.json"
 
     - name: Terraform Init
       run: terraform init
