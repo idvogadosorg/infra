@@ -11,6 +11,8 @@ jobs:
     defaults:
       run:
         working-directory: ./terraform
+    env:
+      TERRAFORM_STATE_BUCKET: idvogados-terraform-state
     steps:
     - name: Checkout
       uses: actions/checkout@v2
@@ -18,10 +20,13 @@ jobs:
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v1
 
-    - name: GCP Credentials
+    - name: Configure GCP Credentials
       run: | 
         echo "${{ secrets.GCP_CREDENTIALS_DEV }}" | base64 -d > credentials.json
         echo "::set-env name=GOOGLE_CREDENTIALS::$(pwd)/credentials.json"
+    
+    - name: Configure Terraform State Bucket
+      run: sed -i -e 's/{{ bucket }}/${{ env.TERRAFORM_STATE_BUCKET }}/g' terraform.tf
 
     - name: Terraform Init
       run: terraform init
@@ -41,6 +46,7 @@ jobs:
     - name: Terraform Plan
       run: terraform plan -var-file="vars/dev.tfvars"
 
+    ## TODO: Remove. To be applied only for production
     - name: Terraform Apply
       run: terraform apply -var-file="vars/dev.tfvars" -auto-approve
 
