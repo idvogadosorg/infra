@@ -1,0 +1,13 @@
+name: 'prod'
+on:
+  push:
+    branches:
+      - prod
+
+jobs:
+  terraform:
+    name: 'Terraform'
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
